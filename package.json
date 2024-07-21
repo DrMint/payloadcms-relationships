@@ -1,0 +1,23 @@
+{
+  "name": "payloadcms-relationships",
+  "version": "1.0.1",
+  "description": "Make it easier to list all incoming/outcoming relationships for a given document",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepack": "npm run build && npm run postbuild"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DrMint/payloadcms-sftp-storage.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "author": "dr_mint",
+  "license": "MIT",
+  "dependencies": {
+    "payload": "^2.24.0"
+  }
+}
