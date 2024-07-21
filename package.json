@@ -1,6 +1,6 @@
 {
   "name": "payloadcms-relationships",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "description": "Make it easier to list all incoming/outcoming relationships for a given document",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
