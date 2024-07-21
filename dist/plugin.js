@@ -107,12 +107,14 @@ const relationshipsPlugin = (params) => (config) => {
             yield ((_k = config.onInit) === null || _k === void 0 ? void 0 : _k.call(config, payload));
             if (rebuildOnInit === false)
                 return;
-            const firstRelationship = yield payload.find({
-                collection: "relationships",
-                limit: 1,
-            });
-            if (firstRelationship.docs.length > 0)
-                return;
+            if (rebuildOnInit === undefined) {
+                const firstRelationship = yield payload.find({
+                    collection: "relationships",
+                    limit: 1,
+                });
+                if (firstRelationship.docs.length > 0)
+                    return;
+            }
             console.log("[payloadcms-relationships] Rebuilding on init...");
             // Delete all existing relationships
             yield payload.delete({

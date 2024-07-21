@@ -146,12 +146,14 @@ export const relationshipsPlugin: (
 
       if (rebuildOnInit === false) return;
 
-      const firstRelationship = await payload.find({
-        collection: "relationships",
-        limit: 1,
-      });
+      if (rebuildOnInit === undefined) {
+        const firstRelationship = await payload.find({
+          collection: "relationships",
+          limit: 1,
+        });
 
-      if (firstRelationship.docs.length > 0) return;
+        if (firstRelationship.docs.length > 0) return;
+      }
 
       console.log("[payloadcms-relationships] Rebuilding on init...");
 
