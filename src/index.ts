@@ -2,7 +2,7 @@ import { Plugin } from "payload/config";
 import { CollectionConfig } from "payload/types";
 import { AfterChangeHook } from "payload/dist/collections/config/types";
 import { afterChangeUpdateRelationships } from "./afterChangeUpdateRelationships";
-import { Relationship } from "./utils";
+import payload, { GeneratedTypes } from "payload";
 
 export interface RelationshipsPluginParams {
   /**
@@ -79,7 +79,7 @@ export const relationshipsPlugin: (
             },
           ],
           afterRead: [
-            async ({ data, context, req: { payload } }) => {
+            async ({ data, context }) => {
               if (context.stopPropagation || data === undefined) {
                 return [];
               }
@@ -107,7 +107,7 @@ export const relationshipsPlugin: (
                 depth: 0,
                 context: { stopPropagation: true },
               });
-              return result.docs.map((doc: Relationship) => doc.document);
+              return result.docs.map((doc) => doc.document);
             },
           ],
         },
@@ -167,7 +167,7 @@ export const relationshipsPlugin: (
         if (!config) return;
 
         const result = await payload.find({
-          collection,
+          collection: collection as keyof GeneratedTypes["collections"],
           depth: 0,
           pagination: false,
         });

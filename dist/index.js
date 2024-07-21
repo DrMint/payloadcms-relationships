@@ -8,9 +8,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.relationshipsPlugin = void 0;
 const afterChangeUpdateRelationships_1 = require("./afterChangeUpdateRelationships");
+const payload_1 = __importDefault(require("payload"));
 /**
  * PayloadCMS Relationships plugin. This plugin adds a new "relationships" collection which holds all the relationships found in all your collections' documents.
  * This plugin makes it easier to list all incoming and outgoing relationships for a given document.
@@ -49,12 +53,12 @@ const relationshipsPlugin = (params) => (config) => {
                         },
                     ],
                     afterRead: [
-                        (_j) => __awaiter(void 0, [_j], void 0, function* ({ data, context, req: { payload } }) {
+                        (_j) => __awaiter(void 0, [_j], void 0, function* ({ data, context }) {
                             if (context.stopPropagation || data === undefined) {
                                 return [];
                             }
                             const document = data.document;
-                            const result = yield payload.find({
+                            const result = yield payload_1.default.find({
                                 collection: "relationships",
                                 where: {
                                     and: [
@@ -122,7 +126,7 @@ const relationshipsPlugin = (params) => (config) => {
                 if (!config)
                     return;
                 const result = yield payload.find({
-                    collection,
+                    collection: collection,
                     depth: 0,
                     pagination: false,
                 });

@@ -1,9 +1,14 @@
-import payload from "payload";
+import payload, { GeneratedTypes } from "payload";
 
-export const getRelationId = (collection: string, id: string) =>
+type Relationship = GeneratedTypes["collections"]["relationships"];
+
+export const getRelationId = (collection: string, id: string): string =>
   `${collection}_${id}`;
 
-export const findRelationByID = (collection: string, id: string) => {
+export const findRelationByID = (
+  collection: string,
+  id: string
+): Promise<Relationship> => {
   return payload.findByID({
     collection: "relationships",
     id: getRelationId(collection, id),
@@ -13,7 +18,7 @@ export const findRelationByID = (collection: string, id: string) => {
 export const findIncomingRelationships = async (
   collection: string,
   id: string
-) => {
+): Promise<Required<Relationship["incomingRelations"]>> => {
   try {
     const { incomingRelations } = await findRelationByID(collection, id);
     return incomingRelations;
@@ -25,7 +30,7 @@ export const findIncomingRelationships = async (
 export const findOutcomingRelationships = async (
   collection: string,
   id: string
-) => {
+): Promise<Required<Relationship["outgoingRelations"]>> => {
   try {
     const { outgoingRelations } = await findRelationByID(collection, id);
     return outgoingRelations;
@@ -33,21 +38,3 @@ export const findOutcomingRelationships = async (
     return [];
   }
 };
-
-export interface Relationship {
-  id: string;
-  document: {
-    relationTo: string;
-    value: string | any;
-  };
-  incomingRelations?:
-    | {
-        relationTo: string;
-        value: string | any;
-      }[]
-    | null;
-  outgoingRelations: {
-    relationTo: string;
-    value: string | any;
-  }[];
-}

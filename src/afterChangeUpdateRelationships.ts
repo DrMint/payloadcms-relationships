@@ -2,7 +2,8 @@ import { RelationalValue, RelationshipSet } from "./RelationshipSet";
 import { AfterChangeHook } from "payload/dist/collections/config/types";
 import payload from "payload";
 import { Block, Field } from "payload/types";
-import { Relationship, findRelationByID, getRelationId } from "./utils";
+import { findRelationByID, getRelationId } from "./utils";
+import { Relationship } from "./types/collections";
 
 type SimplifiedAfterChangeHookParams = Pick<
   Parameters<AfterChangeHook>["0"],
