@@ -20,10 +20,10 @@ export const findRelationByID = (
 export const findIncomingRelationships = async (
   collection: string,
   id: string
-): Promise<Required<Relationship["incomingRelations"]>> => {
+): Promise<NonNullable<Relationship["incomingRelations"]>> => {
   try {
     const { incomingRelations } = await findRelationByID(collection, id);
-    return incomingRelations;
+    return incomingRelations ?? [];
   } catch {
     return [];
   }
@@ -32,7 +32,7 @@ export const findIncomingRelationships = async (
 export const findOutgoingRelationships = async (
   collection: string,
   id: string
-): Promise<Required<Relationship["outgoingRelations"]>> => {
+): Promise<NonNullable<Relationship["outgoingRelations"]>> => {
   try {
     const { outgoingRelations } = await findRelationByID(collection, id);
     return outgoingRelations;
