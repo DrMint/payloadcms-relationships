@@ -26,7 +26,7 @@ exports.findRelationByID = findRelationByID;
 const findIncomingRelationships = (collection, id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { incomingRelations } = yield (0, exports.findRelationByID)(collection, id);
-        return incomingRelations;
+        return incomingRelations !== null && incomingRelations !== void 0 ? incomingRelations : [];
     }
     catch (_a) {
         return [];
