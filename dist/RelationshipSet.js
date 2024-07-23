@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RelationshipSet = void 0;
 class RelationshipSet {
+    _values = [];
     constructor(...relationships) {
-        this._values = [];
         this.add(...relationships);
     }
     add(...relationships) {

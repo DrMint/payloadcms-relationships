@@ -211,7 +211,6 @@ const getRichTextRelationships = (
         );
         if (!block) return [];
         return getRelationships(node.fields, block);
-        break;
       }
 
       case "text":
