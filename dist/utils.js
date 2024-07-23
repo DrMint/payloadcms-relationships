@@ -107,10 +107,9 @@ const getRelationships = (doc, collection) => {
                 const fieldValue = doc[field.name];
                 if (!fieldValue)
                     return;
-                field.blocks.forEach((block) => {
-                    const blockConfig = field.blocks.find(({ slug }) => slug === block.slug);
+                fieldValue.forEach((block) => {
+                    const blockConfig = field.blocks.find(({ slug }) => slug === block.blockType);
                     if (!blockConfig) {
-                        console.warn("Something's wrong");
                         return;
                     }
                     relationships.push(...(0, exports.getRelationships)(block, blockConfig));

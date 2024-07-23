@@ -120,15 +120,16 @@ export const getRelationships = (
       case "blocks": {
         const fieldValue = doc[field.name];
         if (!fieldValue) return;
-        field.blocks.forEach((block) => {
+        fieldValue.forEach((block) => {
           const blockConfig = field.blocks.find(
-            ({ slug }) => slug === block.slug
+            ({ slug }) => slug === block.blockType
           );
           if (!blockConfig) {
-            console.warn("Something's wrong");
             return;
           }
-          relationships.push(...getRelationships(block, blockConfig));
+          relationships.push(
+            ...(0, exports.getRelationships)(block, blockConfig)
+          );
         });
         break;
       }
@@ -226,6 +227,5 @@ const getRichTextRelationships = (
   return content.root.children.flatMap(getNodeRelationships);
 };
 
-const isPayloadType = <T extends Object>(
-  value: string | T
-): value is T => typeof value === "object";
+const isPayloadType = <T extends Object>(value: string | T): value is T =>
+  typeof value === "object";
