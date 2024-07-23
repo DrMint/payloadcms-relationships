@@ -1,6 +1,5 @@
 import payload, { GeneratedTypes } from "payload";
 import { Block, Field } from "payload/types";
-import { RelationalValue } from "./RelationshipSet";
 
 type Relationship = GeneratedTypes["collections"]["relationships"];
 
@@ -171,8 +170,10 @@ export const getRelationships = (
 const getRichTextRelationships = (
   content: any,
   config: any
-): RelationalValue[] => {
-  const getNodeRelationships = (node: any): RelationalValue[] => {
+): Relationship["outgoingRelations"] => {
+  const getNodeRelationships = (
+    node: any
+  ): Relationship["outgoingRelations"] => {
     switch (node.type) {
       case "upload":
       case "relationship":
@@ -229,3 +230,16 @@ const getRichTextRelationships = (
 
 const isPayloadType = <T extends Object>(value: string | T): value is T =>
   typeof value === "object";
+
+export const uniqueBy = <T, K extends string | number>(
+  array: T[],
+  getKey: (item: T) => K
+) => {
+  const alreadyFoundKeys: K[] = [];
+  return array.filter((item) => {
+    var currentItemKey = getKey(item);
+    if (alreadyFoundKeys.includes(currentItemKey)) return false;
+    alreadyFoundKeys.push(currentItemKey);
+    return true;
+  });
+};

@@ -8,4 +8,5 @@ export declare const findOutgoingRelationships: (collection: string, id: string)
 export declare const getRelationships: (doc: any, collection: {
     fields: Field[];
 }) => Relationship["outgoingRelations"];
+export declare const uniqueBy: <T, K extends string | number>(array: T[], getKey: (item: T) => K) => T[];
 export {};

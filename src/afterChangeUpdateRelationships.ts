@@ -1,7 +1,11 @@
-import { RelationshipSet } from "./RelationshipSet";
 import { AfterChangeHook } from "payload/dist/collections/config/types";
 import payload from "payload";
-import { findRelationByID, getRelationId, getRelationships } from "./utils";
+import {
+  findRelationByID,
+  getRelationId,
+  getRelationships,
+  uniqueBy,
+} from "./utils";
 
 type SimplifiedAfterChangeHookParams = Pick<
   Parameters<AfterChangeHook>["0"],
@@ -16,9 +20,11 @@ export const afterChangeUpdateRelationships = async ({
     return doc;
   }
 
-  const relationships = new RelationshipSet(
-    ...getRelationships(doc, collection)
-  ).values;
+  const relationships = uniqueBy(
+    getRelationships(doc, collection),
+    ({ value }) => value
+  );
+
   const id = getRelationId(collection.slug, doc.id);
 
   if (relationships.length === 0) return doc;
@@ -44,4 +50,3 @@ export const afterChangeUpdateRelationships = async ({
     });
   }
 };
-

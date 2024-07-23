@@ -4,14 +4,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.afterChangeUpdateRelationships = void 0;
-const RelationshipSet_1 = require("./RelationshipSet");
 const payload_1 = __importDefault(require("payload"));
 const utils_1 = require("./utils");
 const afterChangeUpdateRelationships = async ({ collection, doc, }) => {
     if ("_status" in doc && doc._status === "draft") {
         return doc;
     }
-    const relationships = new RelationshipSet_1.RelationshipSet(...(0, utils_1.getRelationships)(doc, collection)).values;
+    const relationships = (0, utils_1.uniqueBy)((0, utils_1.getRelationships)(doc, collection), ({ value }) => value);
     const id = (0, utils_1.getRelationId)(collection.slug, doc.id);
     if (relationships.length === 0)
         return doc;

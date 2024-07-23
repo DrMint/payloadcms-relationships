@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getRelationships = exports.findOutgoingRelationships = exports.findIncomingRelationships = exports.findRelationByID = exports.getRelationId = void 0;
+exports.uniqueBy = exports.getRelationships = exports.findOutgoingRelationships = exports.findIncomingRelationships = exports.findRelationByID = exports.getRelationId = void 0;
 const payload_1 = __importDefault(require("payload"));
 const getRelationId = (collection, id) => `${collection}_${id}`;
 exports.getRelationId = getRelationId;
@@ -198,3 +198,14 @@ const getRichTextRelationships = (content, config) => {
     return content.root.children.flatMap(getNodeRelationships);
 };
 const isPayloadType = (value) => typeof value === "object";
+const uniqueBy = (array, getKey) => {
+    const alreadyFoundKeys = [];
+    return array.filter((item) => {
+        var currentItemKey = getKey(item);
+        if (alreadyFoundKeys.includes(currentItemKey))
+            return false;
+        alreadyFoundKeys.push(currentItemKey);
+        return true;
+    });
+};
+exports.uniqueBy = uniqueBy;
