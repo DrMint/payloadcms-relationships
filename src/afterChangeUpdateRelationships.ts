@@ -7,15 +7,30 @@ import {
   uniqueBy,
 } from "./utils";
 
-type SimplifiedAfterChangeHookParams = Pick<
+export interface RelationshipRemoved {
+  id: string;
+  document: {
+    relationTo: string;
+    value: string | any;
+  };
+  removedRelationships: {
+    relationTo: string;
+    value: string | any;
+  }[];
+}
+
+export type AfterChangeUpdateRelationshipsParams = Pick<
   Parameters<AfterChangeHook>["0"],
   "collection" | "doc"
->;
+> & {
+  onRelationshipRemoved?: (relations: RelationshipRemoved) => Promise<void>;
+};
 
 export const afterChangeUpdateRelationships = async ({
   collection,
   doc,
-}: SimplifiedAfterChangeHookParams) => {
+  onRelationshipRemoved,
+}: AfterChangeUpdateRelationshipsParams) => {
   if ("_status" in doc && doc._status === "draft") {
     return doc;
   }
@@ -31,6 +46,23 @@ export const afterChangeUpdateRelationships = async ({
 
   try {
     const existingEntry = await findRelationByID(collection.slug, doc.id);
+
+    const removedRelationships = existingEntry.outgoingRelations.filter(
+      ({ relationTo, value }) =>
+        !relationships.some(
+          (newRelation) =>
+            newRelation.relationTo === relationTo && newRelation.value === value
+        )
+    );
+
+    if (removedRelationships.length > 0) {
+      await onRelationshipRemoved?.({
+        id: existingEntry.id,
+        document: existingEntry.document,
+        removedRelationships: removedRelationships,
+      });
+    }
+
     await payload.update({
       collection: "relationships",
       id: existingEntry.id,

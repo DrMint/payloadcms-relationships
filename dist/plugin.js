@@ -95,14 +95,18 @@ const relationshipsPlugin = (params) => (config) => {
             },
         ],
     };
-    const afterChangeHook = ({ collection, doc }) => (0, afterChangeUpdateRelationships_1.afterChangeUpdateRelationships)({ collection, doc });
+    const afterChangeHook = ({ collection, doc }) => (0, afterChangeUpdateRelationships_1.afterChangeUpdateRelationships)({
+        collection,
+        doc,
+        onRelationshipRemoved: params.onRelationshipRemoved,
+    });
     const collections = config.collections?.map((collection) => ({
         ...collection,
         hooks: {
             ...collection.hooks,
             afterChange: [
+                ...(managedCollections.includes(collection.slug) ? [afterChangeHook] : []),
                 ...(collection.hooks?.afterChange ?? []),
-                ...(collection.slug in managedCollections ? [afterChangeHook] : []),
             ],
         },
     })) ?? [];
@@ -142,6 +146,7 @@ const relationshipsPlugin = (params) => (config) => {
                     await (0, afterChangeUpdateRelationships_1.afterChangeUpdateRelationships)({
                         collection: config,
                         doc,
+                        onRelationshipRemoved: params.onRelationshipRemoved,
                     });
                 }
             });

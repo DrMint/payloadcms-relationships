@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.afterChangeUpdateRelationships = void 0;
 const payload_1 = __importDefault(require("payload"));
 const utils_1 = require("./utils");
-const afterChangeUpdateRelationships = async ({ collection, doc, }) => {
+const afterChangeUpdateRelationships = async ({ collection, doc, onRelationshipRemoved, }) => {
     if ("_status" in doc && doc._status === "draft") {
         return doc;
     }
@@ -16,6 +16,14 @@ const afterChangeUpdateRelationships = async ({ collection, doc, }) => {
         return doc;
     try {
         const existingEntry = await (0, utils_1.findRelationByID)(collection.slug, doc.id);
+        const removedRelationships = existingEntry.outgoingRelations.filter(({ relationTo, value }) => !relationships.some((newRelation) => newRelation.relationTo === relationTo && newRelation.value === value));
+        if (removedRelationships.length > 0) {
+            await onRelationshipRemoved?.({
+                id: existingEntry.id,
+                document: existingEntry.document,
+                removedRelationships: removedRelationships,
+            });
+        }
         await payload_1.default.update({
             collection: "relationships",
             id: existingEntry.id,

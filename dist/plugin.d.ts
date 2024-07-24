@@ -1,5 +1,6 @@
 import { Plugin } from "payload/config";
 import { CollectionConfig } from "payload/types";
+import { AfterChangeUpdateRelationshipsParams } from "./afterChangeUpdateRelationships";
 export interface RelationshipsPluginParams {
     /**
      * Enable or disable plugin
@@ -21,6 +22,10 @@ export interface RelationshipsPluginParams {
      * By default, all collections are managed.
      */
     managedCollections?: string[];
+    /**
+     * Provide a callback when relationships are removed from a document.
+     */
+    onRelationshipRemoved?: AfterChangeUpdateRelationshipsParams["onRelationshipRemoved"];
 }
 /**
  * PayloadCMS Relationships plugin. This plugin adds a new "relationships" collection which holds all the relationships found in all your collections' documents.

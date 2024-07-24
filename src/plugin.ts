@@ -1,7 +1,10 @@
 import { Plugin } from "payload/config";
 import { CollectionConfig } from "payload/types";
 import { AfterChangeHook } from "payload/dist/collections/config/types";
-import { afterChangeUpdateRelationships } from "./afterChangeUpdateRelationships";
+import {
+  AfterChangeUpdateRelationshipsParams,
+  afterChangeUpdateRelationships,
+} from "./afterChangeUpdateRelationships";
 import payload, { GeneratedTypes } from "payload";
 
 export interface RelationshipsPluginParams {
@@ -25,6 +28,10 @@ export interface RelationshipsPluginParams {
    * By default, all collections are managed.
    */
   managedCollections?: string[];
+  /**
+   * Provide a callback when relationships are removed from a document.
+   */
+  onRelationshipRemoved?: AfterChangeUpdateRelationshipsParams["onRelationshipRemoved"];
 }
 
 /**
@@ -124,7 +131,11 @@ export const relationshipsPlugin: (
   };
 
   const afterChangeHook: AfterChangeHook = ({ collection, doc }) =>
-    afterChangeUpdateRelationships({ collection, doc });
+    afterChangeUpdateRelationships({
+      collection,
+      doc,
+      onRelationshipRemoved: params.onRelationshipRemoved,
+    });
 
   const collections =
     config.collections?.map((collection) => ({
@@ -132,8 +143,8 @@ export const relationshipsPlugin: (
       hooks: {
         ...collection.hooks,
         afterChange: [
+          ...(managedCollections.includes(collection.slug) ? [afterChangeHook] : []),
           ...(collection.hooks?.afterChange ?? []),
-          ...(collection.slug in managedCollections ? [afterChangeHook] : []),
         ],
       },
     })) ?? [];
@@ -179,6 +190,7 @@ export const relationshipsPlugin: (
           await afterChangeUpdateRelationships({
             collection: config,
             doc,
+            onRelationshipRemoved: params.onRelationshipRemoved,
           });
         }
       });
