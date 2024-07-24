@@ -73,7 +73,7 @@ export const relationshipsPlugin: (
       {
         name: "document",
         type: "relationship",
-        index: true,
+        admin: { readOnly: true },
         required: true,
         unique: true,
         relationTo: managedCollections,
@@ -86,7 +86,12 @@ export const relationshipsPlugin: (
             type: "relationship",
             hasMany: true,
             relationTo: managedCollections,
-            admin: { readOnly: true, width: "0%", description: "Relations from the following documents to this document." },
+            admin: {
+              readOnly: true,
+              width: "0%",
+              description:
+                "Relations from the following documents to this document.",
+            },
             hooks: {
               beforeChange: [
                 ({ siblingData }) => {
@@ -131,8 +136,14 @@ export const relationshipsPlugin: (
             name: "outgoingRelations",
             type: "relationship",
             hasMany: true,
+            index: true,
             relationTo: managedCollections,
-            admin: { readOnly: true, width: "0%", description: "Relations from this document to the following documents."},
+            admin: {
+              readOnly: true,
+              width: "0%",
+              description:
+                "Relations from this document to the following documents.",
+            },
           },
         ],
       },

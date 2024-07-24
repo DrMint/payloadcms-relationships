@@ -35,7 +35,7 @@ const relationshipsPlugin = (params) => (config) => {
             {
                 name: "document",
                 type: "relationship",
-                index: true,
+                admin: { readOnly: true },
                 required: true,
                 unique: true,
                 relationTo: managedCollections,
@@ -48,7 +48,11 @@ const relationshipsPlugin = (params) => (config) => {
                         type: "relationship",
                         hasMany: true,
                         relationTo: managedCollections,
-                        admin: { readOnly: true, width: "0%", description: "Relations from the following documents to this document." },
+                        admin: {
+                            readOnly: true,
+                            width: "0%",
+                            description: "Relations from the following documents to this document.",
+                        },
                         hooks: {
                             beforeChange: [
                                 ({ siblingData }) => {
@@ -92,8 +96,13 @@ const relationshipsPlugin = (params) => (config) => {
                         name: "outgoingRelations",
                         type: "relationship",
                         hasMany: true,
+                        index: true,
                         relationTo: managedCollections,
-                        admin: { readOnly: true, width: "0%", description: "Relations from this document to the following documents." },
+                        admin: {
+                            readOnly: true,
+                            width: "0%",
+                            description: "Relations from this document to the following documents.",
+                        },
                     },
                 ],
             },
