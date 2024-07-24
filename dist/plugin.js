@@ -88,6 +88,7 @@ const relationshipsPlugin = (params) => (config) => {
             {
                 name: "outgoingRelations",
                 type: "relationship",
+                admin: { readOnly: true },
                 hasMany: true,
                 minRows: 1,
                 required: true,
@@ -98,14 +99,16 @@ const relationshipsPlugin = (params) => (config) => {
     const afterChangeHook = ({ collection, doc }) => (0, afterChangeUpdateRelationships_1.afterChangeUpdateRelationships)({
         collection,
         doc,
-        onRelationshipRemoved: params.onRelationshipRemoved,
+        onOutgoingRelationRemoved: params.onOutgoingRelationRemoved,
     });
     const collections = config.collections?.map((collection) => ({
         ...collection,
         hooks: {
             ...collection.hooks,
             afterChange: [
-                ...(managedCollections.includes(collection.slug) ? [afterChangeHook] : []),
+                ...(managedCollections.includes(collection.slug)
+                    ? [afterChangeHook]
+                    : []),
                 ...(collection.hooks?.afterChange ?? []),
             ],
         },
@@ -146,7 +149,7 @@ const relationshipsPlugin = (params) => (config) => {
                     await (0, afterChangeUpdateRelationships_1.afterChangeUpdateRelationships)({
                         collection: config,
                         doc,
-                        onRelationshipRemoved: params.onRelationshipRemoved,
+                        onOutgoingRelationRemoved: params.onOutgoingRelationRemoved,
                     });
                 }
             });

@@ -1,7 +1,6 @@
-import payload, { GeneratedTypes } from "payload";
+import payload from "payload";
 import { Block, Field } from "payload/types";
-
-type Relationship = GeneratedTypes["collections"]["relationships"];
+import { Relationship } from "./plugin";
 
 export const getRelationId = (collection: string, id: string): string =>
   `${collection}_${id}`;

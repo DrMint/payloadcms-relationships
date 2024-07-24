@@ -1,11 +1,14 @@
 import { Plugin } from "payload/config";
 import { CollectionConfig } from "payload/types";
 import { AfterChangeHook } from "payload/dist/collections/config/types";
-import {
-  AfterChangeUpdateRelationshipsParams,
-  afterChangeUpdateRelationships,
-} from "./afterChangeUpdateRelationships";
+import { afterChangeUpdateRelationships } from "./afterChangeUpdateRelationships";
 import payload, { GeneratedTypes } from "payload";
+
+export type Relationship = GeneratedTypes["collections"]["relationships"];
+
+export type OutgoingRelationRemoved = Pick<Relationship, "id" | "document"> & {
+  removedOutgoingRelations: Relationship["outgoingRelations"];
+};
 
 export interface RelationshipsPluginParams {
   /**
@@ -31,7 +34,9 @@ export interface RelationshipsPluginParams {
   /**
    * Provide a callback when relationships are removed from a document.
    */
-  onRelationshipRemoved?: AfterChangeUpdateRelationshipsParams["onRelationshipRemoved"];
+  onOutgoingRelationRemoved?: (
+    relations: OutgoingRelationRemoved
+  ) => Promise<void>;
 }
 
 /**
@@ -122,6 +127,7 @@ export const relationshipsPlugin: (
       {
         name: "outgoingRelations",
         type: "relationship",
+        admin: { readOnly: true },
         hasMany: true,
         minRows: 1,
         required: true,
@@ -134,7 +140,7 @@ export const relationshipsPlugin: (
     afterChangeUpdateRelationships({
       collection,
       doc,
-      onRelationshipRemoved: params.onRelationshipRemoved,
+      onOutgoingRelationRemoved: params.onOutgoingRelationRemoved,
     });
 
   const collections =
@@ -143,7 +149,9 @@ export const relationshipsPlugin: (
       hooks: {
         ...collection.hooks,
         afterChange: [
-          ...(managedCollections.includes(collection.slug) ? [afterChangeHook] : []),
+          ...(managedCollections.includes(collection.slug)
+            ? [afterChangeHook]
+            : []),
           ...(collection.hooks?.afterChange ?? []),
         ],
       },
@@ -190,7 +198,7 @@ export const relationshipsPlugin: (
           await afterChangeUpdateRelationships({
             collection: config,
             doc,
-            onRelationshipRemoved: params.onRelationshipRemoved,
+            onOutgoingRelationRemoved: params.onOutgoingRelationRemoved,
           });
         }
       });

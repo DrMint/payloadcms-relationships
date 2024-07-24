@@ -7,30 +7,19 @@ import {
   isPayloadType,
   uniqueBy,
 } from "./utils";
+import { RelationshipsPluginParams } from "./plugin";
 
-export interface RelationshipRemoved {
-  id: string;
-  document: {
-    relationTo: string;
-    value: string | any;
-  };
-  removedRelationships: {
-    relationTo: string;
-    value: string | any;
-  }[];
-}
-
-export type AfterChangeUpdateRelationshipsParams = Pick<
+type AfterChangeUpdateRelationshipsParams = Pick<
   Parameters<AfterChangeHook>["0"],
   "collection" | "doc"
 > & {
-  onRelationshipRemoved?: (relations: RelationshipRemoved) => Promise<void>;
+  onOutgoingRelationRemoved?: RelationshipsPluginParams["onOutgoingRelationRemoved"];
 };
 
 export const afterChangeUpdateRelationships = async ({
   collection,
   doc,
-  onRelationshipRemoved,
+  onOutgoingRelationRemoved,
 }: AfterChangeUpdateRelationshipsParams) => {
   if ("_status" in doc && doc._status === "draft") {
     return doc;
@@ -48,7 +37,7 @@ export const afterChangeUpdateRelationships = async ({
   try {
     const existingEntry = await findRelationByID(collection.slug, doc.id);
 
-    const removedRelationships = existingEntry.outgoingRelations.filter(
+    const removedOutgoingRelations = existingEntry.outgoingRelations.filter(
       ({ relationTo, value }) =>
         !relationships.some((newRelation) => {
           if (newRelation.relationTo !== relationTo) return false;
@@ -60,11 +49,11 @@ export const afterChangeUpdateRelationships = async ({
         })
     );
 
-    if (removedRelationships.length > 0) {
-      await onRelationshipRemoved?.({
+    if (removedOutgoingRelations.length > 0) {
+      await onOutgoingRelationRemoved?.({
         id: existingEntry.id,
         document: existingEntry.document,
-        removedRelationships: removedRelationships,
+        removedOutgoingRelations,
       });
     }
 

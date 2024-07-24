@@ -1,6 +1,10 @@
 import { Plugin } from "payload/config";
 import { CollectionConfig } from "payload/types";
-import { AfterChangeUpdateRelationshipsParams } from "./afterChangeUpdateRelationships";
+import { GeneratedTypes } from "payload";
+export type Relationship = GeneratedTypes["collections"]["relationships"];
+export type OutgoingRelationRemoved = Pick<Relationship, "id" | "document"> & {
+    removedOutgoingRelations: Relationship["outgoingRelations"];
+};
 export interface RelationshipsPluginParams {
     /**
      * Enable or disable plugin
@@ -25,7 +29,7 @@ export interface RelationshipsPluginParams {
     /**
      * Provide a callback when relationships are removed from a document.
      */
-    onRelationshipRemoved?: AfterChangeUpdateRelationshipsParams["onRelationshipRemoved"];
+    onOutgoingRelationRemoved?: (relations: OutgoingRelationRemoved) => Promise<void>;
 }
 /**
  * PayloadCMS Relationships plugin. This plugin adds a new "relationships" collection which holds all the relationships found in all your collections' documents.
