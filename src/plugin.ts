@@ -127,11 +127,9 @@ export const relationshipsPlugin: (
       {
         name: "outgoingRelations",
         type: "relationship",
-        admin: { readOnly: true },
         hasMany: true,
-        minRows: 1,
-        required: true,
         relationTo: managedCollections,
+        admin: { readOnly: true },
       },
     ],
   };

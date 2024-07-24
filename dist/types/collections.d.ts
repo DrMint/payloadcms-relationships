@@ -8,10 +8,10 @@ export interface Relationship {
         relationTo: string;
         value: string | any;
     }[] | null;
-    outgoingRelations: {
+    outgoingRelations?: {
         relationTo: string;
         value: string | any;
-    }[];
+    }[] | null;
 }
 interface Config {
     collections: {

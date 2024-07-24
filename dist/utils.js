@@ -27,7 +27,7 @@ exports.findIncomingRelationships = findIncomingRelationships;
 const findOutgoingRelationships = async (collection, id) => {
     try {
         const { outgoingRelations } = await (0, exports.findRelationByID)(collection, id);
-        return outgoingRelations;
+        return outgoingRelations ?? [];
     }
     catch {
         return [];

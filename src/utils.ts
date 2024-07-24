@@ -2,6 +2,9 @@ import payload from "payload";
 import { Block, Field } from "payload/types";
 import { Relationship } from "./plugin";
 
+type IncomingRelation = NonNullable<Relationship["incomingRelations"]>[number];
+type OutgoingRelation = NonNullable<Relationship["outgoingRelations"]>[number];
+
 export const getRelationId = (collection: string, id: string): string =>
   `${collection}_${id}`;
 
@@ -18,7 +21,7 @@ export const findRelationByID = (
 export const findIncomingRelationships = async (
   collection: string,
   id: string
-): Promise<NonNullable<Relationship["incomingRelations"]>> => {
+): Promise<IncomingRelation[]> => {
   try {
     const { incomingRelations } = await findRelationByID(collection, id);
     return incomingRelations ?? [];
@@ -30,10 +33,10 @@ export const findIncomingRelationships = async (
 export const findOutgoingRelationships = async (
   collection: string,
   id: string
-): Promise<NonNullable<Relationship["outgoingRelations"]>> => {
+): Promise<OutgoingRelation[]> => {
   try {
     const { outgoingRelations } = await findRelationByID(collection, id);
-    return outgoingRelations;
+    return outgoingRelations ?? [];
   } catch {
     return [];
   }
@@ -42,8 +45,8 @@ export const findOutgoingRelationships = async (
 export const getRelationships = (
   doc: any,
   collection: { fields: Field[] }
-): Relationship["outgoingRelations"] => {
-  const relationships: Relationship["outgoingRelations"] = [];
+): OutgoingRelation[] => {
+  const relationships: OutgoingRelation[] = [];
 
   collection.fields.forEach((field) => {
     switch (field.type) {
@@ -169,10 +172,8 @@ export const getRelationships = (
 const getRichTextRelationships = (
   content: any,
   config: any
-): Relationship["outgoingRelations"] => {
-  const getNodeRelationships = (
-    node: any
-  ): Relationship["outgoingRelations"] => {
+): OutgoingRelation[] => {
+  const getNodeRelationships = (node: any): OutgoingRelation[] => {
     switch (node.type) {
       case "upload":
       case "relationship":
@@ -227,8 +228,9 @@ const getRichTextRelationships = (
   return content.root.children.flatMap(getNodeRelationships);
 };
 
-export const isPayloadType = <T extends Object>(value: string | T): value is T =>
-  typeof value === "object";
+export const isPayloadType = <T extends Object>(
+  value: string | T
+): value is T => typeof value === "object";
 
 export const uniqueBy = <T, K extends string | number>(
   array: T[],

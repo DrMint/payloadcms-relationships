@@ -10,10 +10,12 @@ export interface Relationship {
         value: string | any;
       }[]
     | null;
-  outgoingRelations: {
-    relationTo: string;
-    value: string | any;
-  }[];
+  outgoingRelations?:
+    | {
+        relationTo: string;
+        value: string | any;
+      }[]
+    | null;
 }
 
 interface Config {

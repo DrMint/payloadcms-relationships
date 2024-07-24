@@ -32,12 +32,12 @@ export const afterChangeUpdateRelationships = async ({
 
   const id = getRelationId(collection.slug, doc.id);
 
-  if (relationships.length === 0) return doc;
-
   try {
     const existingEntry = await findRelationByID(collection.slug, doc.id);
 
-    const removedOutgoingRelations = existingEntry.outgoingRelations.filter(
+    const removedOutgoingRelations = (
+      existingEntry.outgoingRelations ?? []
+    ).filter(
       ({ relationTo, value }) =>
         !relationships.some((newRelation) => {
           if (newRelation.relationTo !== relationTo) return false;
