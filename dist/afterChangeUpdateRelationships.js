@@ -12,8 +12,6 @@ const afterChangeUpdateRelationships = async ({ collection, doc, onOutgoingRelat
     }
     const relationships = (0, utils_1.uniqueBy)((0, utils_1.getRelationships)(doc, collection), ({ value }) => value);
     const id = (0, utils_1.getRelationId)(collection.slug, doc.id);
-    if (relationships.length === 0)
-        return doc;
     try {
         const existingEntry = await (0, utils_1.findRelationByID)(collection.slug, doc.id);
         const removedOutgoingRelations = (existingEntry.outgoingRelations ?? []).filter(({ relationTo, value }) => !relationships.some((newRelation) => {

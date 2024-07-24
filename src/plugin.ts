@@ -79,57 +79,62 @@ export const relationshipsPlugin: (
         relationTo: managedCollections,
       },
       {
-        name: "incomingRelations",
-        type: "relationship",
-        hasMany: true,
-        relationTo: managedCollections,
-        admin: { readOnly: true },
-        hooks: {
-          beforeChange: [
-            ({ siblingData }) => {
-              delete siblingData.incomingRelations;
-            },
-          ],
-          afterRead: [
-            async ({ data, context }) => {
-              if (context.stopPropagation || data === undefined) {
-                return [];
-              }
-              const document = data.document;
-              const result = await payload.find({
-                collection: "relationships",
-                where: {
-                  and: [
-                    {
-                      "outgoingRelations.relationTo": {
-                        equals: document.relationTo,
-                      },
-                    },
-                    {
-                      "outgoingRelations.value": {
-                        equals:
-                          typeof document.value === "object"
-                            ? document.value.id
-                            : document.value,
-                      },
-                    },
-                  ],
+        type: "row",
+        fields: [
+          {
+            name: "incomingRelations",
+            type: "relationship",
+            hasMany: true,
+            relationTo: managedCollections,
+            admin: { readOnly: true, width: "0%", description: "Relations from the following documents to this document." },
+            hooks: {
+              beforeChange: [
+                ({ siblingData }) => {
+                  delete siblingData.incomingRelations;
                 },
-                pagination: false,
-                depth: 0,
-                context: { stopPropagation: true },
-              });
-              return result.docs.map((doc) => doc.document);
+              ],
+              afterRead: [
+                async ({ data, context }) => {
+                  if (context.stopPropagation || data === undefined) {
+                    return [];
+                  }
+                  const document = data.document;
+                  const result = await payload.find({
+                    collection: "relationships",
+                    where: {
+                      and: [
+                        {
+                          "outgoingRelations.relationTo": {
+                            equals: document.relationTo,
+                          },
+                        },
+                        {
+                          "outgoingRelations.value": {
+                            equals:
+                              typeof document.value === "object"
+                                ? document.value.id
+                                : document.value,
+                          },
+                        },
+                      ],
+                    },
+                    pagination: false,
+                    depth: 0,
+                    context: { stopPropagation: true },
+                  });
+                  return result.docs.map((doc) => doc.document);
+                },
+              ],
             },
-          ],
-        },
-      },
-      {
-        name: "outgoingRelations",
-        type: "relationship",
-        hasMany: true,
-        relationTo: managedCollections,
-        admin: { readOnly: true },
+          },
+          {
+            name: "outgoingRelations",
+            type: "relationship",
+            hasMany: true,
+            relationTo: managedCollections,
+            admin: { readOnly: true, width: "0%", description: "Relations from this document to the following documents."},
+          },
+        ],
       },
     ],
   };
@@ -193,11 +198,7 @@ export const relationshipsPlugin: (
 
         // For each doc in that collection
         for (const doc of result.docs) {
-          await afterChangeUpdateRelationships({
-            collection: config,
-            doc,
-            onOutgoingRelationRemoved: params.onOutgoingRelationRemoved,
-          });
+          await afterChangeUpdateRelationships({ collection: config, doc });
         }
       });
 
