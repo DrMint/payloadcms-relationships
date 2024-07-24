@@ -8,5 +8,6 @@ export declare const findOutgoingRelationships: (collection: string, id: string)
 export declare const getRelationships: (doc: any, collection: {
     fields: Field[];
 }) => Relationship["outgoingRelations"];
+export declare const isPayloadType: <T extends Object>(value: string | T) => value is T;
 export declare const uniqueBy: <T, K extends string | number>(array: T[], getKey: (item: T) => K) => T[];
 export {};

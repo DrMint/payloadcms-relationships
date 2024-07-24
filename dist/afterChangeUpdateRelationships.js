@@ -16,7 +16,15 @@ const afterChangeUpdateRelationships = async ({ collection, doc, onRelationshipR
         return doc;
     try {
         const existingEntry = await (0, utils_1.findRelationByID)(collection.slug, doc.id);
-        const removedRelationships = existingEntry.outgoingRelations.filter(({ relationTo, value }) => !relationships.some((newRelation) => newRelation.relationTo === relationTo && newRelation.value === value));
+        const removedRelationships = existingEntry.outgoingRelations.filter(({ relationTo, value }) => !relationships.some((newRelation) => {
+            if (newRelation.relationTo !== relationTo)
+                return false;
+            const id = (0, utils_1.isPayloadType)(value) ? value.id : value;
+            const newId = (0, utils_1.isPayloadType)(newRelation.value)
+                ? newRelation.value.id
+                : newRelation.value;
+            return id === newId;
+        }));
         if (removedRelationships.length > 0) {
             await onRelationshipRemoved?.({
                 id: existingEntry.id,

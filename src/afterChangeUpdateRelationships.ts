@@ -4,6 +4,7 @@ import {
   findRelationByID,
   getRelationId,
   getRelationships,
+  isPayloadType,
   uniqueBy,
 } from "./utils";
 
@@ -49,10 +50,14 @@ export const afterChangeUpdateRelationships = async ({
 
     const removedRelationships = existingEntry.outgoingRelations.filter(
       ({ relationTo, value }) =>
-        !relationships.some(
-          (newRelation) =>
-            newRelation.relationTo === relationTo && newRelation.value === value
-        )
+        !relationships.some((newRelation) => {
+          if (newRelation.relationTo !== relationTo) return false;
+          const id = isPayloadType(value) ? value.id : value;
+          const newId = isPayloadType(newRelation.value)
+            ? newRelation.value.id
+            : newRelation.value;
+          return id === newId;
+        })
     );
 
     if (removedRelationships.length > 0) {

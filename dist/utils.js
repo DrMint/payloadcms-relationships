@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.uniqueBy = exports.getRelationships = exports.findOutgoingRelationships = exports.findIncomingRelationships = exports.findRelationByID = exports.getRelationId = void 0;
+exports.uniqueBy = exports.isPayloadType = exports.getRelationships = exports.findOutgoingRelationships = exports.findIncomingRelationships = exports.findRelationByID = exports.getRelationId = void 0;
 const payload_1 = __importDefault(require("payload"));
 const getRelationId = (collection, id) => `${collection}_${id}`;
 exports.getRelationId = getRelationId;
@@ -44,7 +44,7 @@ const getRelationships = (doc, collection) => {
                     return;
                 relationships.push({
                     relationTo: field.relationTo,
-                    value: isPayloadType(fieldValue) ? fieldValue.id : fieldValue,
+                    value: (0, exports.isPayloadType)(fieldValue) ? fieldValue.id : fieldValue,
                 });
                 break;
             }
@@ -58,7 +58,7 @@ const getRelationships = (doc, collection) => {
                     if (field.hasMany) {
                         fieldValue.forEach((value) => relationships.push({
                             relationTo,
-                            value: isPayloadType(value) ? value.id : value,
+                            value: (0, exports.isPayloadType)(value) ? value.id : value,
                         }));
                     }
                     else {
@@ -73,7 +73,7 @@ const getRelationships = (doc, collection) => {
                     if (field.hasMany) {
                         fieldValue.forEach(({ relationTo, value }) => relationships.push({
                             relationTo,
-                            value: isPayloadType(value) ? value.id : value,
+                            value: (0, exports.isPayloadType)(value) ? value.id : value,
                         }));
                     }
                     else {
@@ -156,7 +156,7 @@ const getRichTextRelationships = (content, config) => {
                 return [
                     {
                         relationTo: node.relationTo,
-                        value: isPayloadType(node.value) ? node.value.id : node.value,
+                        value: (0, exports.isPayloadType)(node.value) ? node.value.id : node.value,
                     },
                 ];
             case "list":
@@ -168,7 +168,7 @@ const getRichTextRelationships = (content, config) => {
                     return [
                         {
                             relationTo: node.fields.doc.relationTo,
-                            value: isPayloadType(node.fields.doc.value)
+                            value: (0, exports.isPayloadType)(node.fields.doc.value)
                                 ? node.fields.doc.value.id
                                 : node.fields.doc.value,
                         },
@@ -198,6 +198,7 @@ const getRichTextRelationships = (content, config) => {
     return content.root.children.flatMap(getNodeRelationships);
 };
 const isPayloadType = (value) => typeof value === "object";
+exports.isPayloadType = isPayloadType;
 const uniqueBy = (array, getKey) => {
     const alreadyFoundKeys = [];
     return array.filter((item) => {

@@ -228,7 +228,7 @@ const getRichTextRelationships = (
   return content.root.children.flatMap(getNodeRelationships);
 };
 
-const isPayloadType = <T extends Object>(value: string | T): value is T =>
+export const isPayloadType = <T extends Object>(value: string | T): value is T =>
   typeof value === "object";
 
 export const uniqueBy = <T, K extends string | number>(
